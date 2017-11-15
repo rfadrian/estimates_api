@@ -4,8 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb7d8ca93b8bcb597f38ffe7aa32881e",
+    "content-hash": "95de4109ee3777bd7e400baeae6e5b3f",
     "packages": [
+        {
+            "name": "despark/apidoc",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/despark/apidoc.git",
+                "reference": "127bcb2681312493ad65ac2da7c68bbea095d367"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/despark/apidoc/zipball/127bcb2681312493ad65ac2da7c68bbea095d367",
+                "reference": "127bcb2681312493ad65ac2da7c68bbea095d367",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "5.*"
+            },
+            "type": "package",
+            "autoload": {
+                "classmap": [],
+                "psr-4": {
+                    "Despark\\Apidoc\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Panayot Balkandzhiyski",
+                    "email": "panayot@despark.com"
+                }
+            ],
+            "description": "Generate api documentation and use swagger to consume it",
+            "keywords": [
+                "api",
+                "documentation",
+                "laravel",
+                "swagger"
+            ],
+            "time": "2017-04-05T08:03:53+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "0.1",

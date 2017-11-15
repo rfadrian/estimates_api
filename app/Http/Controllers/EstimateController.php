@@ -10,8 +10,12 @@ use Illuminate\Http\Request;
 class EstimateController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
+     * List estimates.
+     * @apiDesc List estimates. Filtered is email is present.
+     * @apiParam string $email Email to filter the estimates.
+     * @apiParam integer $page Page number.
+     * @apiErr 422 | Validation errors
+     * @apiResp 200 | list of estimates
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -35,14 +39,21 @@ class EstimateController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     * Create new Estimate.
+     * @apiDesc Create new Estimate.
+     * @apiParam string $title Estimate Title.
+     * @apiParam string $description required | Estimate description.
+     * @apiParam integer $category_id Category of the estimate.
+     * @apiParam string $user[email] required | User Email.
+     * @apiParam string $user[phone] required | User phone.
+     * @apiParam string $user[address] required | User Address.
+     * @apiErr 422 | Validation errors.
+     * @apiErr 418 | Other errors.
+     * @apiResp 200 | Created Estimate id
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        /*Las llamadas ajax devuelven un error 422 al fallar la validación*/
         $validateData = $request->validate([
             'title' => 'nullable|max:255',
             'description' => 'required',
@@ -65,6 +76,7 @@ class EstimateController extends Controller
     /**
      * Create a new user if not exists and update phone and address
      * @param array $userData
+     * @return integer created/updated user id;
      */
     public function saveAndUpdateUser($userData)
     {
@@ -83,7 +95,7 @@ class EstimateController extends Controller
     /**
      * @param $estimateData
      * @param $user
-     * @return mixed
+     * @return integer created estimate id
      */
     private function createEstimate($estimateData, $user)
     {
@@ -110,10 +122,15 @@ class EstimateController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Estimate  $estimate
+     * Update Pending Estimate.
+     * @apiDesc Update Pending Estimat.
+     * @apiParam string $title Estimate Title.
+     * @apiParam string $description Estimate description.
+     * @apiParam integer $category_id Category of the estimate.
+     * @apiParam integer $estimate Estimate id.
+     * @apiErr 422 | Validation errors.
+     * @apiErr 400 | Estimate is not pending. Can't be modified.
+     * @apiResp 200 | Updated estimate id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Estimate $estimate)
@@ -142,7 +159,14 @@ class EstimateController extends Controller
         return $estimate->id;
     }
 
-
+    /**
+     * Publish Estimate.
+     * @apiDesc Publish Estimate
+     * @apiParam integer $estimate Estimate id.
+     * @apiErr 400 | Estimate can't be published.
+     * @apiResp 200 | Published estimate state_id.
+     * @return \Illuminate\Http\Response
+     */
     public function publish(Estimate $estimate)
     {
         if ($estimate->isPublishable($estimate)) {
@@ -154,6 +178,14 @@ class EstimateController extends Controller
         return response()->json(['error' => 'Estimate doesn\'t meet requirements to be published'],400);
     }
 
+    /**
+     * Discard Estimate.
+     * @apiDesc Discard Estimate
+     * @apiParam integer $estimate Estimate id.
+     * @apiErr 400 | Estimate is already discarded.
+     * @apiResp 200 | Published estimate state_id.
+     * @return \Illuminate\Http\Response
+     */
     public function discard(Estimate $estimate)
     {
 
@@ -163,11 +195,5 @@ class EstimateController extends Controller
         $estimate->state_id = State::DISCARDED;
         $estimate->save();
         return response()->json(['state_id' => $estimate->state_id]);
-    }
-
-
-    public function suggestCategory()
-    {
-
     }
 }
