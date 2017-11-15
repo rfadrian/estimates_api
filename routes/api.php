@@ -17,7 +17,7 @@ Route::get('/estimate/{page?}/{email?}', 'EstimateController@index');
 
 Route::post('/estimate', 'EstimateController@store');
 
-//Usando estimate como parametro, Se asigna directamente el modelo a la ruta.
+//Using estimate as parameter name, it is automatically binded to the controller. app\Exceptions\Handler has a method to override the default laravel exception on model not found.
 Route::post('/estimate/{estimate}', 'EstimateController@update');
 
 Route::post('/estimate/publish/{estimate}', 'EstimateController@publish');
