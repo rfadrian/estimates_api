@@ -28,8 +28,8 @@ class EditEstimateTest extends TestCase
 
     }
 
-    public function testEditEstimateNotPending() {
-
+    public function testEditEstimateNotPending()
+    {
         $estimate = factory('App\Models\Estimate')->create(['state_id' => 2]);
         $data = [
             'title' => 'Lorem ipsum',

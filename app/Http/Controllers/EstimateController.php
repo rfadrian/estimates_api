@@ -14,19 +14,24 @@ class EstimateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $validateData = $request->validate([
+            'email' => 'nullable|email',
+            'page' => 'nullable|int'
+        ]);
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $estimatesQuery = Estimate::query();
+
+        /*Filtering by email*/
+        if ($validateData['email']) {
+            $estimatesQuery->whereHas('user', function($query) use ($validateData) {
+                $query->where('email', $validateData['email']);
+            });
+        }
+        $estimates = $estimatesQuery->paginate(10);
+
+        return response()->json($estimates);
     }
 
     /**
@@ -75,6 +80,11 @@ class EstimateController extends Controller
         return $user->id;
     }
 
+    /**
+     * @param $estimateData
+     * @param $user
+     * @return mixed
+     */
     private function createEstimate($estimateData, $user)
     {
         $estimate = new Estimate();
@@ -100,19 +110,6 @@ class EstimateController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Estimate  $estimate
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Estimate $estimate)
-    {
-        //
-    }
-
-
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -126,7 +123,7 @@ class EstimateController extends Controller
             'description' => 'nullable',
             'category_id' => 'nullable|int'
         ]);
-        //Si no tenemos campos a editar, salimos.
+        //If there isn't fields to modify, return.
         if (!$validateData) {
             return $estimate->id;
         }
@@ -135,7 +132,7 @@ class EstimateController extends Controller
              return response()->json(['error' => 'Estimate can\'t be modified. State is not pending'],400);
         }
 
-        /*Como si validateData está vacio ya habriamos salido, No tenemos que comprobar que sea un array antes de recorrerlo.*/
+
         foreach($validateData as $param => $value) {
             $estimate->$param = $value;
         }
@@ -146,11 +143,19 @@ class EstimateController extends Controller
     }
 
 
-    public function publish(Request $request, Estimate $estimate) {
+    public function publish(Estimate $estimate)
+    {
+        if ($estimate->isPublishable($estimate)) {
+            $estimate->state_id = State::PUBLISHED;
+            $estimate->save();
+            return response()->json(['state_id' => $estimate->state_id]);
+        }
 
+        return response()->json(['error' => 'Estimate doesn\'t meet requirements to be published'],400);
     }
 
-    public function discard(Estimate $estimate) {
+    public function discard(Estimate $estimate)
+    {
 
         if ($estimate->state_id == State::DISCARDED) {
             return response()->json(['error' => 'Estimate is already discarded'],400);
@@ -158,5 +163,11 @@ class EstimateController extends Controller
         $estimate->state_id = State::DISCARDED;
         $estimate->save();
         return response()->json(['state_id' => $estimate->state_id]);
+    }
+
+
+    public function suggestCategory()
+    {
+
     }
 }

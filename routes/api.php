@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/estimate', 'EstimateController@index');
+Route::get('/estimate/{page?}/{email?}', 'EstimateController@index');
 
 Route::post('/estimate', 'EstimateController@store');
 

@@ -17,4 +17,8 @@ class User extends Model
         'address', 'email', 'phone',
     ];
 
+    public function estimates()
+    {
+        return $this->hasMany('App\Models\User');
+    }
 }
