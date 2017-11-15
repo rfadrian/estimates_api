@@ -157,5 +157,6 @@ class EstimateController extends Controller
         }
         $estimate->state_id = State::DISCARDED;
         $estimate->save();
+        return response()->json(['state_id' => $estimate->state_id]);
     }
 }
