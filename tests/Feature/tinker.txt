@@ -1,0 +1,2 @@
+$categories = factory('App\Models\Category', 5)->create();
+$categories->each(function ($cat){ factory('App\Models\Estimate', 10)->create(['category_id' => $cat->id]);});

@@ -13,6 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/estimate/{page?}/{email?}', 'EstimateController@index');
+
+Route::post('/estimate', 'EstimateController@store');
+
+//Usando estimate como parametro, Se asigna directamente el modelo a la ruta.
+Route::post('/estimate/{estimate}', 'EstimateController@update');
+
+Route::post('/estimate/publish/{estimate}', 'EstimateController@publish');
+
+Route::post('/estimate/discard/{estimate}', 'EstimateController@discard');

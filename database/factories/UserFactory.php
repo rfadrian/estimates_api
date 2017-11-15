@@ -13,13 +13,32 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(App\User::class, function (Faker $faker) {
-    static $password;
-
+$factory->define(App\Models\User::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'address' => $faker->address,
         'email' => $faker->unique()->safeEmail,
-        'password' => $password ?: $password = bcrypt('secret'),
-        'remember_token' => str_random(10),
+        'phone' => $faker->phoneNumber,
+    ];
+});
+
+$factory->define(App\Models\Category::class, function (Faker $faker) {
+    return [
+        'name' => $faker->sentence(2),
+    ];
+});
+
+
+$factory->define(App\Models\Estimate::class, function (Faker $faker) {
+    return [
+        'title' => $faker->sentence(6),
+        'description' => $faker->paragraph,
+        'user_id' => function () {
+            return factory('App\Models\User')->create()->id;
+        },
+        'category_id' => function() {
+            return factory('App\Models\Category')->create()->id;
+        },
+//        'state_id' => $faker->randomElement($array = [1,2,3]),
+        'state_id' => 1
     ];
 });
